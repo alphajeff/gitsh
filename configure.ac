@@ -33,6 +33,11 @@ AX_PROG_RUBY_VERSION(
   AC_MSG_ERROR(Ruby 2.0.0 or later is required to install gitsh)
 )
 
+ruby_prefix="$($RUBY -r rbconfig -e 'puts RbConfig::MAKEFILE_CONFIG.fetch(%(prefix))')"
+ruby_pkgconfig_name="$($RUBY -r rbconfig -e 'puts RbConfig::MAKEFILE_CONFIG.fetch(%(ruby_pc)).sub(/\.pc/, %())')"
+export PKG_CONFIG_PATH="$ruby_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+PKG_CHECK_MODULES([RUBY], [$ruby_pkgconfig_name])
+
 VENDOR_DIRECTORY="vendor/gems"
 
 test -d $VENDOR_DIRECTORY || mkdir -p $VENDOR_DIRECTORY

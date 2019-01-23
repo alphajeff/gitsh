@@ -13,9 +13,9 @@ EXTRA_DIST = \
 
 bin_PROGRAMS = gitsh
 gitsh_SOURCES = src/gitsh.c
-AM_CPPFLAGS = -DGITSH_RB_PATH="\"$(rubydir)/$(PACKAGE).rb\"" \
-	-I"/usr/local/include/ruby-2.5.0" \
-	-I"/usr/local/include/ruby-2.5.0/x86_64-darwin17"
+gitsh_CPPFLAGS = $(RUBY_CFLAGS) \
+	-DGITSH_RB_PATH="\"$(rubydir)/$(PACKAGE).rb\""
+gitsh_LDFLAGS = $(RUBY_LDFAGS)
 
 LDADD = /usr/local/lib/libruby.dylib
 
