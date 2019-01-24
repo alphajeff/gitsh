@@ -6,7 +6,7 @@ int
 main(int argc, char *argv[])
 {
     int ruby_argc;
-    char *ruby_argv[];
+    char **ruby_argv;
 
     ruby_argc = argc + 1;
     ruby_argv = malloc((ruby_argc + 1) * sizeof(char *));
