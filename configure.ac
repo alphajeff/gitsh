@@ -33,22 +33,13 @@ AX_PROG_RUBY_VERSION(
   AC_MSG_ERROR(Ruby 2.0.0 or later is required to install gitsh)
 )
 
-ruby_prefix="$($RUBY -r rbconfig -e 'puts RbConfig::MAKEFILE_CONFIG.fetch(%(prefix))')"
-ruby_pkgconfig_name="$($RUBY -r rbconfig -e 'puts RbConfig::MAKEFILE_CONFIG.fetch(%(ruby_pc)).sub(/\.pc/, %())')"
-export PKG_CONFIG_PATH="$ruby_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
-PKG_CHECK_MODULES([RUBY], [$ruby_pkgconfig_name])
-
 echo "--------------------"
-echo "ruby_prefix =           $ruby_prefix"
-echo "ruby_pkgconfig_name =   $ruby_pkgconfig_name"
-echo "PKG_CONFIG_PATH =       $PKG_CONFIG_PATH"
+RUBY_CFLAGS=$($RUBY ./configure.rb '-I$(rubyarchhdrdir) -I$(rubyhdrdir)')
+RUBY_LIBS=$($RUBY ./configure.rb '-L$(libdir) $(LIBRUBYARG_STATIC)')
+AC_SUBST([RUBY_CFLAGS])
+AC_SUBST([RUBY_LIBS])
 echo "RUBY_CFLAGS =           $RUBY_CFLAGS"
 echo "RUBY_LIBS =             $RUBY_LIBS"
-echo "--------------------"
-$RUBY -r mkmf -e 'puts $CPPFLAGS'
-$RUBY -r mkmf -e 'puts $LDFLAGS'
-echo "--------------------"
-$RUBY ./configure.rb
 echo "--------------------"
 
 VENDOR_DIRECTORY="vendor/gems"
