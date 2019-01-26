@@ -45,6 +45,9 @@ echo "PKG_CONFIG_PATH =       $PKG_CONFIG_PATH"
 echo "RUBY_CFLAGS =           $RUBY_CFLAGS"
 echo "RUBY_LIBS =             $RUBY_LIBS"
 echo "--------------------"
+$RUBY -r mkmf -e 'puts $CPPFLAGS'
+$RUBY -r mkmf -e 'puts $LDFLAGS'
+echo "--------------------"
 
 VENDOR_DIRECTORY="vendor/gems"
 
