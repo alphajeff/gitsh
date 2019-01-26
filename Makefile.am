@@ -15,8 +15,7 @@ bin_PROGRAMS = gitsh
 gitsh_SOURCES = src/gitsh.c
 gitsh_CPPFLAGS = $(RUBY_CFLAGS) \
 	-DGITSH_RB_PATH="\"$(rubydir)/$(PACKAGE).rb\""
-
-LDADD = $(RUBY_LIBS)
+gitsh_LDFLAGS = $(RUBY_LIBS)
 
 man_MANS = man/man1/gitsh.1 man/man5/gitsh_completions.5
 nobase_dist_pkgdata_DATA = $(vendorfiles)
