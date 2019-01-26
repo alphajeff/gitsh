@@ -48,6 +48,8 @@ echo "--------------------"
 $RUBY -r mkmf -e 'puts $CPPFLAGS'
 $RUBY -r mkmf -e 'puts $LDFLAGS'
 echo "--------------------"
+$RUBY ./configure.rb
+echo "--------------------"
 
 VENDOR_DIRECTORY="vendor/gems"
 
