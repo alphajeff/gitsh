@@ -38,6 +38,14 @@ ruby_pkgconfig_name="$($RUBY -r rbconfig -e 'puts RbConfig::MAKEFILE_CONFIG.fetc
 export PKG_CONFIG_PATH="$ruby_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
 PKG_CHECK_MODULES([RUBY], [$ruby_pkgconfig_name])
 
+echo "--------------------"
+echo "ruby_prefix =           $ruby_prefix"
+echo "ruby_pkgconfig_name =   $ruby_pkgconfig_name"
+echo "PKG_CONFIG_PATH =       $PKG_CONFIG_PATH"
+echo "RUBY_CFLAGS =           $RUBY_CFLAGS"
+echo "RUBY_LIBS =             $RUBY_LIBS"
+echo "--------------------"
+
 VENDOR_DIRECTORY="vendor/gems"
 
 test -d $VENDOR_DIRECTORY || mkdir -p $VENDOR_DIRECTORY
