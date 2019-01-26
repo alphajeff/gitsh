@@ -36,7 +36,7 @@ AX_PROG_RUBY_VERSION(
 echo "--------------------"
 $RUBY ./configure.rb 'Enable shared? $(ENABLE_SHARED)'
 RUBY_CFLAGS=$($RUBY ./configure.rb '-I$(rubyarchhdrdir) -I$(rubyhdrdir)')
-RUBY_LIBS=$($RUBY ./configure.rb '-L$(libdir) $(LIBRUBYARG_STATIC)')
+RUBY_LIBS=$($RUBY ./configure.rb '-L$(libdir) $(LIBRUBYARG)')
 RUBY_LDADD=$($RUBY ./configure.rb '$(libdir)/$(LIBRUBY)')
 AC_SUBST([RUBY_CFLAGS])
 AC_SUBST([RUBY_LIBS])
