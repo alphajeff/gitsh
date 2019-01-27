@@ -13,9 +13,10 @@ EXTRA_DIST = \
 
 bin_PROGRAMS = gitsh
 gitsh_SOURCES = src/gitsh.c
-gitsh_CPPFLAGS = $(RUBY_CPPFLAGS) \
+gitsh_CPPFLAGS = $(RUBY_CFLAGS) \
 	-DGITSH_RB_PATH="\"$(rubydir)/$(PACKAGE).rb\""
-gitsh_LDFLAGS = $(RUBY_LDFLAGS) $(RUBY_EXTRA_LIBS)
+gitsh_LDFLAGS = $(RUBY_LIBS)
+LDADD = $(RUBY_LDADD)
 
 man_MANS = man/man1/gitsh.1 man/man5/gitsh_completions.5
 nobase_dist_pkgdata_DATA = $(vendorfiles)
