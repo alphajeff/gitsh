@@ -11,6 +11,7 @@ module Gitsh
       '\\',                         # Escape character
       '$',                          # Variable or sub-shell prefix
       '(', ')',                     # Parentheses
+      '{', '}',                     # Braces (for expansion)
     ]).freeze
 
     SOFT_STRING_ESCAPABLES = CharacterClass.new([
@@ -22,6 +23,11 @@ module Gitsh
     HARD_STRING_ESCAPABLES = CharacterClass.new([
       '\\',                         # Escape character
       "'",                          # String terminator
+    ]).freeze
+
+    BRACE_EXPANSION_ESCAPABLES = CharacterClass.new([
+      '{', '}',
+      ',',
     ]).freeze
 
     class Environment < RLTK::Lexer::Environment
@@ -89,6 +95,24 @@ module Gitsh
     rule(/\\/, :soft_string) { [:WORD, '\\'] }
     rule(/"/, :soft_string) { pop_state }
 
+    [:default, :brace_expansion].each do |state|
+      rule(/\{/, state) do
+        push_state(:brace_expansion)
+        :LEFT_BRACE
+      end
+    end
+    rule(/\}/, :brace_expansion) do
+      pop_state
+      :RIGHT_BRACE
+    end
+    rule(/#{BRACE_EXPANSION_ESCAPABLES.to_negative_regexp}+/, :brace_expansion) do |t|
+      [:WORD, t]
+    end
+    rule(/\\#{BRACE_EXPANSION_ESCAPABLES.to_regexp}+/, :brace_expansion) do |t|
+      [:WORD, t[1]]
+    end
+    rule(/,/, :brace_expansion) { :COMMA }
+
     [:default, :soft_string].each do |state|
       rule(/\$/, state) { push_state(:need_var_name) }
       rule(/\$\{/, state) do
@@ -113,6 +137,7 @@ module Gitsh
       when :need_var_name
         tokens.insert(-2, RLTK::Token.new(:MISSING, 'var'))
       when :need_closing_brace
+        #FIXME: when :brace_expansion also?
         tokens.insert(-2, RLTK::Token.new(:MISSING, '}'))
       end
 

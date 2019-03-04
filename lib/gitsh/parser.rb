@@ -1,4 +1,5 @@
 require 'rltk'
+require 'gitsh/arguments/brace_expansion'
 require 'gitsh/arguments/string_argument'
 require 'gitsh/arguments/composite_argument'
 require 'gitsh/arguments/variable_argument'
@@ -64,6 +65,26 @@ module Gitsh
       clause(:word) { |word| Arguments::StringArgument.new(word) }
       clause(:VAR) { |var| Arguments::VariableArgument.new(var) }
       clause(:subshell) { |program| Arguments::Subshell.new(program) }
+      clause(:brace_expansion) { |brace_expansion| brace_expansion }
+    end
+
+    production(:brace_expansion) do
+      clause('LEFT_BRACE .brace_expansion_list RIGHT_BRACE') do |options|
+        Arguments::BraceExpansion.new(options)
+      end
+    end
+
+    production(:brace_expansion_list) do
+      clause('argument') { |option| [option] }
+      clause('.brace_expansion_list COMMA .argument') do |options, option|
+        options + [option]
+      end
+      clause('.brace_expansion_list COMMA') do |options|
+        options + [Arguments::StringArgument.new('')]
+      end
+      clause('COMMA .brace_expansion_list') do |options|
+        [Arguments::StringArgument.new('')] + options
+      end
     end
 
     production(:word, 'WORD+') { |words| words.inject(:+) }

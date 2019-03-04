@@ -43,6 +43,20 @@ describe Gitsh::Lexer do
         to produce_tokens ['LEFT_PAREN', 'WORD(foo)', 'RIGHT_PAREN', 'EOS']
     end
 
+    it 'recognises braces for exapnsion' do
+      expect('h{i,o}p').to produce_tokens [
+        'WORD(h)', 'LEFT_BRACE', 'WORD(i)', 'COMMA', 'WORD(o)', 'RIGHT_BRACE',
+        'WORD(p)', 'EOS',
+      ]
+    end
+
+    it 'recognises nested braces for exapnsion' do
+      expect('{{1,2},3}').to produce_tokens [
+        'LEFT_BRACE', 'LEFT_BRACE', 'WORD(1)', 'COMMA', 'WORD(2)',
+        'RIGHT_BRACE', 'COMMA', 'WORD(3)', 'RIGHT_BRACE', 'EOS',
+      ]
+    end
+
     [' ', "\t", "\f", '\'', '"', '\\', '$', '#', ';', '&', '|', '(', ')'].each do |char|
       it "recognises unquoted words containing an escaped #{char.inspect}" do
         expect("foo\\#{char}bar").

@@ -107,6 +107,50 @@ describe Gitsh::Parser do
       )
     end
 
+    it 'parses commands with brace expansion in arguments' do
+      command = stub_command_factory
+
+      result = parse(tokens(
+        [:WORD, ':echo'], [:SPACE], [:WORD, 'h'],
+        [:LEFT_BRACE], [:WORD, 'ello'], [:COMMA], [:WORD, 'i'], [:RIGHT_BRACE],
+        [:EOS],
+      ))
+
+      expect(result).to eq command
+      expect(Gitsh::Commands::Factory).to have_received(:build).with(
+        Gitsh::Commands::InternalCommand,
+        command: 'echo',
+        args: [
+          composite([
+            string('h'),
+            brace_expansion([string('ello'), string('i')]),
+          ]),
+        ],
+      )
+    end
+
+    it 'parses commands with nested brace expansion arguments' do
+      command = stub_command_factory
+
+      result = parse(tokens(
+        [:WORD, ':echo'], [:SPACE], [:LEFT_BRACE],
+        [:LEFT_BRACE], [:WORD, '1'], [:COMMA], [:WORD, '2'], [:RIGHT_BRACE],
+        [:COMMA], [:WORD, '3'], [:RIGHT_BRACE], [:EOS],
+      ))
+
+      expect(result).to eq command
+      expect(Gitsh::Commands::Factory).to have_received(:build).with(
+        Gitsh::Commands::InternalCommand,
+        command: 'echo',
+        args: [
+          brace_expansion([
+            brace_expansion([string('1'), string('2')]),
+            string('3'),
+          ]),
+        ],
+      )
+    end
+
     it 'parses commands with composite arguments' do
       command = stub_command_factory
 
@@ -224,6 +268,10 @@ describe Gitsh::Parser do
 
   def subshell(content)
     Gitsh::Arguments::Subshell.new(content)
+  end
+
+  def brace_expansion(options)
+    Gitsh::Arguments::BraceExpansion.new(options)
   end
 
   def composite(parts)
